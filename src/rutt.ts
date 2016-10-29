@@ -1,6 +1,6 @@
 import * as Hapi from 'hapi';
 import * as Boom from 'boom';
-import { cloneDeep } from 'lodash';
+import { cloneDeepWith, isPlainObject } from 'lodash';
 
 import { Route, Controller, RuttReply, RuttRequest } from './route';
 
@@ -24,24 +24,23 @@ export class Rutt {
         this.server = new Hapi.Server(options);
     }
 
-    start(options: RuttConnectionOptions): Promise<void> {
-        this.server.connection(options);
+    connection(options: RuttConnectionOptions) {
+        return this.server.connection(options);
+    }
 
+    start(): Promise<void> {
         this.hapiRoutes.forEach(route => {
             console.log(`[${route.method}] ${route.path}`);
             this.server.route(route);
         });
 
-        return new Promise((resolve, reject) => {
-            this.server.start(err => {
-                if (err) {
-                    reject(err);
-                    return;
-                }
+        return this.server.start() as Promise<void>;
+    }
 
-                resolve();
-            });
-        });
+    register(plugin: any): Promise<any>
+    register(plugins: any[]): Promise<any>
+    register(plugins: any | any[]): Promise<any> {
+        return this.server.register(plugins) as Promise<any>;
     }
 
     routes(routes: Route[]) {
@@ -51,7 +50,11 @@ export class Rutt {
     private compileRoutes(routes: Route[], context: RouteContext = { path: '', params: {} }) {
         const hapiRoutes = [];
         routes.forEach(route => {
-            const ctx = cloneDeep(context);
+            const ctx = cloneDeepWith(context, (obj) => {
+                if (!isPlainObject(obj)) {
+                    return obj;
+                }
+            });
             const config: any = { validate: {} };
 
             // Assemble path based on the parent routes.
@@ -117,6 +120,7 @@ export class Rutt {
                                     return;
                                 }
 
+                                console.log(err);
                                 reply(Boom.badImplementation(err.message || err, err.stack));
                             });
                     },
