@@ -18,17 +18,17 @@ export interface RouteContext {
 
 export class Rutt {
     public server: Hapi.Server;
-    private hapiRoutes: Hapi. IRouteConfiguration[];
+    protected hapiRoutes: Hapi. IRouteConfiguration[];
 
     constructor(options?: RuttOptions) {
         this.server = new Hapi.Server(options);
     }
 
-    connection(options: RuttConnectionOptions) {
+    public connection(options: RuttConnectionOptions) {
         return this.server.connection(options);
     }
 
-    start(): Promise<void> {
+    public start(): Promise<void> {
         this.hapiRoutes.forEach(route => {
             console.log(`[${route.method}] ${route.path}`);
             this.server.route(route);
@@ -37,17 +37,17 @@ export class Rutt {
         return this.server.start() as Promise<void>;
     }
 
-    register(plugin: any): Promise<any>
-    register(plugins: any[]): Promise<any>
-    register(plugins: any | any[]): Promise<any> {
+    public register(plugin: any): Promise<any>
+    public register(plugins: any[]): Promise<any>
+    public register(plugins: any | any[]): Promise<any> {
         return this.server.register(plugins) as Promise<any>;
     }
 
-    routes(routes: Route[]) {
+    public routes(routes: Route[]) {
         this.hapiRoutes = this.compileRoutes(routes);
     }
 
-    private compileRoutes(routes: Route[], context: RouteContext = { path: '', params: {} }) {
+    protected compileRoutes(routes: Route[], context: RouteContext = { path: '', params: {} }) {
         const hapiRoutes = [];
         routes.forEach(route => {
             const ctx = cloneDeepWith(context, (obj) => {
@@ -120,8 +120,7 @@ export class Rutt {
                                     return;
                                 }
 
-                                console.log(err);
-                                reply(Boom.badImplementation(err.message || err, err.stack));
+                                this.handleError(err, reply);
                             });
                     },
                 });
@@ -148,7 +147,12 @@ export class Rutt {
         }
     }
 
-    public constructController(controllerCtor: Controller<any>): any {
+    protected handleError(err: any, reply: RuttReply) {
+        console.log(err);
+        reply(Boom.badImplementation(err.message || err, err.stack));
+    }
+
+    protected constructController(controllerCtor: Controller<any>): any {
         return new controllerCtor();
     }
 }

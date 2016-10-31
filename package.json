@@ -1,6 +1,6 @@
 {
   "name": "rutt",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "An angular 2 inspired route config for Hapi",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -10,7 +10,8 @@
   },
   "scripts": {
     "build": "tsc",
-    "watch": "tsc -w"
+    "watch": "tsc -w",
+    "prepublish": "npm run build"
   },
   "author": "James Birtles <jameshbirtles@gmail.com>",
   "license": "MIT",
