@@ -106,9 +106,16 @@ export class Rutt {
                                 return ctx.controller[route.handler].call(ctx.controller, req, reply);
                             })
                             .then(res => {
-                                if (!reply._replied) {
-                                    reply(res);
+                                if (reply._replied) {
+                                    return;
                                 }
+
+                                if (res == null) {
+                                    reply().code(204);
+                                    return;
+                                }
+
+                                reply(res);
                             })
                             .catch(err => {
                                 if (reply._replied) {
