@@ -58,7 +58,7 @@ export class Rutt {
             const config: any = { validate: {} };
 
             // Assemble path based on the parent routes.
-            if (route.path) {
+            if (route.path != null) {
                 let path = route.path;
                 if (path.startsWith(':')) {
                     path = `{${path.slice(1)}}`;
