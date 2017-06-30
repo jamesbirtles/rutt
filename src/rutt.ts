@@ -1,24 +1,22 @@
-import * as Hapi from 'hapi';
-import * as Boom from 'boom';
-import { cloneDeepWith, isPlainObject } from 'lodash';
+import * as Hapi from "hapi";
+import * as Boom from "boom";
+import { cloneDeepWith, isPlainObject } from "lodash";
 
-import { Route, Controller, RuttReply, RuttRequest } from './route';
+import { Route, Controller, RuttReply, RuttRequest } from "./route";
 
-export interface RuttOptions extends Hapi.IServerOptions {
-}
+export interface RuttOptions extends Hapi.ServerOptions {}
 
-export interface RuttConnectionOptions extends Hapi.IServerConnectionOptions {
-}
+export interface RuttConnectionOptions extends Hapi.ServerConnectionOptions {}
 
 export interface RouteContext {
     controller?: Controller<any>;
     path: string;
-    params: { [key: string]: Hapi.IJoi };
+    params: { [key: string]: Hapi.JoiValidationObject };
 }
 
 export class Rutt {
     public server: Hapi.Server;
-    protected hapiRoutes: Hapi. IRouteConfiguration[];
+    protected hapiRoutes: Hapi.RouteConfiguration[];
 
     constructor(options?: RuttOptions) {
         this.server = new Hapi.Server(options);
@@ -34,11 +32,11 @@ export class Rutt {
             this.server.route(route);
         });
 
-        return this.server.start() as Promise<void>;
+        return this.server.start().then(() => undefined);
     }
 
-    public register(plugin: any): Promise<any>
-    public register(plugins: any[]): Promise<any>
+    public register(plugin: any): Promise<any>;
+    public register(plugins: any[]): Promise<any>;
     public register(plugins: any | any[]): Promise<any> {
         return this.server.register(plugins) as Promise<any>;
     }
@@ -47,10 +45,10 @@ export class Rutt {
         this.hapiRoutes = this.compileRoutes(routes);
     }
 
-    protected compileRoutes(routes: Route[], context: RouteContext = { path: '', params: {} }) {
+    protected compileRoutes(routes: Route[], context: RouteContext = { path: "", params: {} }) {
         const hapiRoutes = [];
         routes.forEach(route => {
-            const ctx = cloneDeepWith(context, (obj) => {
+            const ctx = cloneDeepWith(context, obj => {
                 if (!isPlainObject(obj)) {
                     return obj;
                 }
@@ -60,7 +58,7 @@ export class Rutt {
             // Assemble path based on the parent routes.
             if (route.path != null) {
                 let path = route.path;
-                if (path.startsWith(':')) {
+                if (path.startsWith(":")) {
                     path = `{${path.slice(1)}}`;
                 }
 
@@ -89,21 +87,28 @@ export class Rutt {
             // This is a destination route.
             if (route.handler) {
                 if (!ctx.controller) {
-                    throw new Error('Cannot register route handler without an existing controller');
+                    throw new Error("Cannot register route handler without an existing controller");
                 }
 
                 if (!ctx.controller[route.handler]) {
-                    throw new Error(`${route.handler} does not exists on controller ${ctx.controller.constructor.name}`);
+                    throw new Error(
+                        `${route.handler} does not exists on controller ${ctx.controller.constructor
+                            .name}`
+                    );
                 }
 
                 hapiRoutes.push({
                     config,
-                    method: route.method || 'get',
+                    method: route.method || "get",
                     path: ctx.path,
                     handler: (req, reply) => {
                         this.runGuards(route, req, reply)
                             .then(() => {
-                                return ctx.controller[route.handler].call(ctx.controller, req, reply);
+                                return ctx.controller[route.handler].call(
+                                    ctx.controller,
+                                    req,
+                                    reply
+                                );
                             })
                             .then(res => {
                                 if (reply._replied) {
@@ -129,7 +134,7 @@ export class Rutt {
 
                                 this.handleError(err, reply);
                             });
-                    },
+                    }
                 });
             }
 

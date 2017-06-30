@@ -1,29 +1,29 @@
 {
-  "name": "rutt",
-  "version": "0.3.3",
-  "description": "An angular 2 inspired route config for Hapi",
-  "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
-  "repository": {
-    "url": "https://github.com/UnwrittenFun/rutt",
-    "type": "git"
-  },
-  "scripts": {
-    "build": "tsc",
-    "watch": "tsc -w",
-    "prepublish": "npm run build"
-  },
-  "author": "James Birtles <jameshbirtles@gmail.com>",
-  "license": "MIT",
-  "devDependencies": {
-    "@types/boom": "0.0.32",
-    "@types/hapi": "^13.0.36",
-    "@types/lodash": "^4.14.37",
-    "typescript": "^2.0.3"
-  },
-  "dependencies": {
-    "boom": "^4.2.0",
-    "hapi": "^15.2.0",
-    "lodash": "^4.16.4"
-  }
+    "name": "rutt",
+    "version": "0.4.0",
+    "description": "Angular inspired route config for Hapi",
+    "main": "dist/index.js",
+    "typings": "dist/index.d.ts",
+    "repository": {
+        "url": "https://github.com/UnwrittenFun/rutt",
+        "type": "git"
+    },
+    "scripts": {
+        "build": "tsc",
+        "watch": "tsc -w",
+        "prepublish": "npm run build"
+    },
+    "author": "James Birtles <jameshbirtles@gmail.com>",
+    "license": "MIT",
+    "devDependencies": {
+        "@types/boom": "^4.3.5",
+        "@types/hapi": "^16.1.6",
+        "@types/lodash": "^4.14.67",
+        "typescript": "^2.3.4"
+    },
+    "dependencies": {
+        "boom": "^5.1.0",
+        "hapi": "^16.4.3",
+        "lodash": "^4.17.4"
+    }
 }

@@ -1,6 +1,6 @@
 # Rutt
 
-An angular 2 inspired route config for Hapi
+Angular inspired route config for Hapi
 
 ## Example
 
@@ -45,10 +45,11 @@ const appRoutes: Route[] = [
   },
 ];
 
+rutt.connection({ port: 3000 });
 rutt.routes(appRoutes);
 
 rutt
-  .start({ port: 3000 })
+  .start()
   .then(() => console.log(`Server running at: ${rutt.server.info.uri}`))
   .catch(err => console.error('Error starting server', err));
 ```
