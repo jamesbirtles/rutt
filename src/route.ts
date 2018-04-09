@@ -2,7 +2,7 @@ import * as Hapi from "hapi";
 
 export interface RuttRequest extends Hapi.Request {}
 
-export interface RuttReply extends Hapi.ReplyNoContinue {
+export interface RuttReply extends Hapi.ResponseToolkit {
     _replied: boolean;
 }
 
@@ -19,6 +19,6 @@ export interface Route {
     handler?: string;
     method?: string | string[];
     guards?: GuardFunction[];
-    config?: Hapi.RouteAdditionalConfigurationOptions;
-    validate?: Hapi.RouteValidationConfigurationObject;
+    options?: Hapi.RouteOptions;
+    validate?: Hapi.RouteOptionsValidate;
 }

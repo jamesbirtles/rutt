@@ -1,29 +1,26 @@
 import * as Hapi from "hapi";
 import * as Boom from "boom";
+import { Schema as JoiValidationObject } from "joi";
 import { cloneDeepWith, isPlainObject } from "lodash";
 
 import { Route, Controller, RuttReply, RuttRequest } from "./route";
 
 export interface RuttOptions extends Hapi.ServerOptions {}
 
-export interface RuttConnectionOptions extends Hapi.ServerConnectionOptions {}
+export interface RuttConnectionOptions extends Hapi.ServerOptions {}
 
 export interface RouteContext {
     controller?: Controller<any>;
     path: string;
-    params: { [key: string]: Hapi.JoiValidationObject };
+    params: { [key: string]: JoiValidationObject };
 }
 
 export class Rutt {
     public server: Hapi.Server;
-    protected hapiRoutes: Hapi.RouteConfiguration[];
+    protected hapiRoutes: Hapi.RequestRoute[];
 
-    constructor(options?: RuttOptions) {
+    constructor(options: RuttConnectionOptions) {
         this.server = new Hapi.Server(options);
-    }
-
-    public connection(options: RuttConnectionOptions) {
-        return this.server.connection(options);
     }
 
     public start(): Promise<void> {
@@ -53,7 +50,7 @@ export class Rutt {
                     return obj;
                 }
             });
-            const config: any = { validate: {} };
+            const options: any = { validate: {} };
 
             // Assemble path based on the parent routes.
             if (route.path != null) {
@@ -70,19 +67,19 @@ export class Rutt {
                 ctx.controller = this.constructController(route.controller);
             }
 
-            if (route.config) {
-                Object.assign(config, route.config);
+            if (route.options) {
+                Object.assign(options, route.options);
             }
 
             if (route.validate) {
-                config.validate = route.validate;
+                options.validate = route.validate;
 
                 if (route.validate.params) {
                     Object.assign(ctx.params, route.validate.params);
                 }
-            }
 
-            config.validate.params = Object.assign(config.validate.params || {}, ctx.params);
+                options.validate.params = Object.assign(options.validate.params || {}, ctx.params);
+            }
 
             // This is a destination route.
             if (route.handler) {
@@ -98,11 +95,11 @@ export class Rutt {
                 }
 
                 hapiRoutes.push({
-                    config,
+                    options,
                     method: route.method || "get",
                     path: ctx.path,
-                    handler: (req, reply) => {
-                        this.runGuards(route, req, reply)
+                    handler: (req: Hapi.Request, reply: RuttReply) => {
+                        return this.runGuards(route, req, reply)
                             .then(() => {
                                 return ctx.controller[route.handler].call(
                                     ctx.controller,
@@ -116,11 +113,10 @@ export class Rutt {
                                 }
 
                                 if (res == null) {
-                                    reply().code(204);
-                                    return;
+                                    return reply.response().code(204);
                                 }
 
-                                reply(res);
+                                return res;
                             })
                             .catch(err => {
                                 if (reply._replied) {
@@ -128,11 +124,10 @@ export class Rutt {
                                 }
 
                                 if (err.isBoom) {
-                                    reply(err);
-                                    return;
+                                    return reply.response(err);
                                 }
 
-                                this.handleError(err, reply);
+                                return this.handleError(err, reply);
                             });
                     }
                 });
@@ -160,8 +155,7 @@ export class Rutt {
     }
 
     protected handleError(err: any, reply: RuttReply) {
-        console.log(err);
-        reply(Boom.badImplementation(err.message || err, err.stack));
+        return reply.response(Boom.badImplementation(err.message || err, err.stack));
     }
 
     protected constructController(controllerCtor: Controller<any>): any {
