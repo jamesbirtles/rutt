@@ -19,10 +19,8 @@ export class Rutt {
     public server: Hapi.Server;
     protected hapiRoutes: Hapi.RequestRoute[];
 
-    constructor() {}
-
-    public connection(options: RuttConnectionOptions) {
-        return this.server = new Hapi.Server(options);
+    constructor(options: RuttConnectionOptions) {
+        this.server = new Hapi.Server(options);
     }
 
     public start(): Promise<void> {
