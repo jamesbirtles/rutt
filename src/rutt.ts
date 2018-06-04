@@ -10,9 +10,9 @@ export interface RuttOptions extends Hapi.ServerOptions {}
 export interface RuttConnectionOptions extends Hapi.ServerOptions {}
 
 export interface RouteContext {
-    controller?: Controller<any>;
+    controller?: Record<string, Function>;
     path: string;
-    params: { [key: string]: JoiValidationObject };
+    params?: { [key: string]: JoiValidationObject };
 }
 
 export class Rutt {
@@ -42,10 +42,10 @@ export class Rutt {
         this.hapiRoutes = this.compileRoutes(routes);
     }
 
-    protected compileRoutes(routes: Route[], context: RouteContext = { path: '', params: {} }) {
+    protected compileRoutes(routes: Route[], context: RouteContext = { path: '' }) {
         const hapiRoutes: Hapi.ServerRoute[] = [];
         routes.forEach(route => {
-            const ctx = cloneDeepWith(context, obj => {
+            const ctx: RouteContext = cloneDeepWith(context, obj => {
                 if (!isPlainObject(obj)) {
                     return obj;
                 }
@@ -72,13 +72,18 @@ export class Rutt {
             }
 
             if (route.validate) {
-                options.validate = route.validate;
+                options.validate = { ...route.validate };
 
                 if (route.validate.params) {
-                    Object.assign(ctx.params, route.validate.params);
+                    ctx.params = Object.assign(ctx.params || {}, route.validate.params);
                 }
 
-                options.validate.params = Object.assign(options.validate.params || {}, ctx.params);
+                if (options.validate.params || ctx.params) {
+                    options.validate.params = Object.assign(
+                        options.validate.params || {},
+                        ctx.params,
+                    );
+                }
             }
 
             // This is a destination route.
@@ -102,7 +107,7 @@ export class Rutt {
                     handler: (req: Hapi.Request, reply: RuttReply) => {
                         return this.runGuards(route, req, reply)
                             .then(() => {
-                                return ctx.controller[route.handler!].call(
+                                return ctx.controller![route.handler!].call(
                                     ctx.controller,
                                     req,
                                     reply,
