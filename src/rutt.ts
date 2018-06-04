@@ -1,9 +1,9 @@
-import * as Hapi from "hapi";
-import * as Boom from "boom";
-import { Schema as JoiValidationObject } from "joi";
-import { cloneDeepWith, isPlainObject } from "lodash";
+import * as Hapi from 'hapi';
+import * as Boom from 'boom';
+import { Schema as JoiValidationObject } from 'joi';
+import { cloneDeepWith, isPlainObject } from 'lodash';
 
-import { Route, Controller, RuttReply, RuttRequest } from "./route";
+import { Route, Controller, RuttReply, RuttRequest } from './route';
 
 export interface RuttOptions extends Hapi.ServerOptions {}
 
@@ -42,7 +42,7 @@ export class Rutt {
         this.hapiRoutes = this.compileRoutes(routes);
     }
 
-    protected compileRoutes(routes: Route[], context: RouteContext = { path: "", params: {} }) {
+    protected compileRoutes(routes: Route[], context: RouteContext = { path: '', params: {} }) {
         const hapiRoutes = [];
         routes.forEach(route => {
             const ctx = cloneDeepWith(context, obj => {
@@ -55,7 +55,7 @@ export class Rutt {
             // Assemble path based on the parent routes.
             if (route.path != null) {
                 let path = route.path;
-                if (path.startsWith(":")) {
+                if (path.startsWith(':')) {
                     path = `{${path.slice(1)}}`;
                 }
 
@@ -84,19 +84,20 @@ export class Rutt {
             // This is a destination route.
             if (route.handler) {
                 if (!ctx.controller) {
-                    throw new Error("Cannot register route handler without an existing controller");
+                    throw new Error('Cannot register route handler without an existing controller');
                 }
 
                 if (!ctx.controller[route.handler]) {
                     throw new Error(
-                        `${route.handler} does not exists on controller ${ctx.controller.constructor
-                            .name}`
+                        `${route.handler} does not exists on controller ${
+                            ctx.controller.constructor.name
+                        }`,
                     );
                 }
 
                 hapiRoutes.push({
                     options,
-                    method: route.method || "get",
+                    method: route.method || 'get',
                     path: ctx.path,
                     handler: (req: Hapi.Request, reply: RuttReply) => {
                         return this.runGuards(route, req, reply)
@@ -104,7 +105,7 @@ export class Rutt {
                                 return ctx.controller[route.handler].call(
                                     ctx.controller,
                                     req,
-                                    reply
+                                    reply,
                                 );
                             })
                             .then(res => {
@@ -129,7 +130,7 @@ export class Rutt {
 
                                 return this.handleError(err, reply);
                             });
-                    }
+                    },
                 });
             }
 
