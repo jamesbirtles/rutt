@@ -17,7 +17,7 @@ export interface RouteContext {
 
 export class Rutt {
     public server: Hapi.Server;
-    protected hapiRoutes: Hapi.RequestRoute[];
+    protected hapiRoutes: Hapi.ServerRoute[] = [];
 
     constructor(options: RuttConnectionOptions) {
         this.server = new Hapi.Server(options);
@@ -43,14 +43,14 @@ export class Rutt {
     }
 
     protected compileRoutes(routes: Route[], context: RouteContext = { path: '', params: {} }) {
-        const hapiRoutes = [];
+        const hapiRoutes: Hapi.ServerRoute[] = [];
         routes.forEach(route => {
             const ctx = cloneDeepWith(context, obj => {
                 if (!isPlainObject(obj)) {
                     return obj;
                 }
             });
-            const options: any = { validate: {} };
+            const options: Hapi.RouteOptions = { validate: {} };
 
             // Assemble path based on the parent routes.
             if (route.path != null) {
@@ -102,7 +102,7 @@ export class Rutt {
                     handler: (req: Hapi.Request, reply: RuttReply) => {
                         return this.runGuards(route, req, reply)
                             .then(() => {
-                                return ctx.controller[route.handler].call(
+                                return ctx.controller[route.handler!].call(
                                     ctx.controller,
                                     req,
                                     reply,
