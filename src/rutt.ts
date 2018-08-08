@@ -130,7 +130,7 @@ export class Rutt {
                                 }
 
                                 if (err.isBoom) {
-                                    return reply.response(err);
+                                    return err;
                                 }
 
                                 return this.handleError(err, reply);
