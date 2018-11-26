@@ -161,7 +161,7 @@ export class Rutt {
     }
 
     protected handleError(err: any, reply: RuttReply) {
-        return reply.response(Boom.badImplementation(err.message || err, err.stack));
+        return Boom.badImplementation(err.message || err, err.stack);
     }
 
     protected constructController(controllerCtor: Controller<any>): any {
