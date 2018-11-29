@@ -160,7 +160,7 @@ export class Rutt {
         }
     }
 
-    protected handleError(err: any, reply: RuttReply) {
+    protected handleError(err: any, reply: RuttReply): Boom<any> | Hapi.ResponseObject {
         return Boom.badImplementation(err.message || err, err.stack);
     }
 
