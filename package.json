@@ -1,6 +1,6 @@
 {
     "name": "rutt",
-    "version": "0.7.2",
+    "version": "0.8.0",
     "description": "Angular inspired route config for Hapi",
     "main": "dist/index.js",
     "typings": "dist/index.d.ts",
@@ -17,15 +17,15 @@
     "license": "MIT",
     "devDependencies": {
         "@types/boom": "^7.2.1",
-        "@types/hapi": "^17.6.4",
-        "@types/joi": "^14.0.0",
-        "@types/lodash": "^4.14.67",
-        "typescript": "^3.1.6"
+        "@types/hapi": "^18.0.*",
+        "@types/joi": "^14.3.2",
+        "@types/lodash": "^4.14.123",
+        "typescript": "^3.4.3"
     },
     "dependencies": {
         "boom": "^7.3.0",
-        "hapi": "^17.8.1",
-        "joi": "^14.3.0",
+        "hapi": "^18.1.0",
+        "joi": "^14.3.1",
         "lodash": "^4.17.11"
     }
 }

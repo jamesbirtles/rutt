@@ -1,9 +1,9 @@
-import * as Hapi from 'hapi';
 import * as Boom from 'boom';
+import * as Hapi from 'hapi';
 import { Schema as JoiValidationObject } from 'joi';
 import { cloneDeepWith, isPlainObject } from 'lodash';
 
-import { Route, Controller, RuttReply, RuttRequest } from './route';
+import { Controller, Route, RuttReply, RuttRequest } from './route';
 
 export interface RuttOptions extends Hapi.ServerOptions {}
 
