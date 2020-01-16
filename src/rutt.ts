@@ -1,6 +1,6 @@
-import * as Boom from 'boom';
-import * as Hapi from 'hapi';
-import { Schema as JoiValidationObject } from 'joi';
+import * as Boom from '@hapi/boom';
+import * as Hapi from '@hapi/hapi';
+import { Schema as JoiValidationObject } from '@hapi/joi';
 import { cloneDeepWith, isPlainObject } from 'lodash';
 
 import { Controller, Route, RuttReply, RuttRequest } from './route';
@@ -160,7 +160,7 @@ export class Rutt {
         }
     }
 
-    protected handleError(err: any, reply: RuttReply): Boom<any> | Hapi.ResponseObject {
+    protected handleError(err: any, reply: RuttReply): Boom.Boom<any> | Hapi.ResponseObject {
         return Boom.badImplementation(err.message || err, err.stack);
     }
 

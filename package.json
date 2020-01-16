@@ -16,16 +16,15 @@
     "author": "James Birtles <jameshbirtles@gmail.com>",
     "license": "MIT",
     "devDependencies": {
-        "@types/boom": "^7.3.0",
-        "@types/hapi": "^18.0.3",
-        "@types/joi": "^14.3.4",
+        "@types/hapi__hapi": "^19.0.0",
+        "@types/hapi__joi": "^16.0.6",
         "@types/lodash": "^4.14.149",
         "typescript": "^3.7.4"
     },
     "dependencies": {
-        "boom": "^7.3.0",
-        "hapi": "^18.1.0",
-        "joi": "^14.3.1",
+        "@hapi/boom": "^9.0.0",
+        "@hapi/hapi": "^19.0.5",
+        "@hapi/joi": "^17.0.2",
         "lodash": "^4.17.15"
     },
     "publishConfig": {
