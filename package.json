@@ -1,6 +1,6 @@
 {
     "name": "rutt",
-    "version": "0.9.1",
+    "version": "0.10.0",
     "description": "Angular inspired route config for Hapi",
     "main": "dist/index.js",
     "typings": "dist/index.d.ts",
