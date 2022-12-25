@@ -10,7 +10,7 @@ export interface Controller<T> extends Function {
     new (...args: any[]): T;
 }
 
-export type GuardFunction = (req: RuttRequest, reply: RuttReply) => void;
+export type GuardFunction = (req: RuttRequest, reply: RuttReply) => Promise<void>;
 
 export interface Route {
     path?: string;

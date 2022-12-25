@@ -1,7 +1,8 @@
+import { Schema as JoiValidationObject } from 'joi';
+import { cloneDeepWith, isPlainObject } from 'lodash';
+
 import * as Boom from '@hapi/boom';
 import * as Hapi from '@hapi/hapi';
-import { Schema as JoiValidationObject } from '@hapi/joi';
-import { cloneDeepWith, isPlainObject } from 'lodash';
 
 import { Controller, Route, RuttReply, RuttRequest } from './route';
 
@@ -23,7 +24,7 @@ export class Rutt {
         this.server = new Hapi.Server(options);
     }
 
-    public start(): Promise<void> {
+    public async start(): Promise<void> {
         this.hapiRoutes.forEach(route => {
             console.log(`[${route.method}] ${route.path}`);
             this.server.route(route);
@@ -104,7 +105,7 @@ export class Rutt {
                     options,
                     method: route.method || 'get',
                     path: ctx.path,
-                    handler: (req: Hapi.Request, reply: RuttReply) => {
+                    handler: async (req: Hapi.Request, reply: RuttReply) => {
                         return this.runGuards(route, req, reply)
                             .then(() => {
                                 return ctx.controller![route.handler!].call(
